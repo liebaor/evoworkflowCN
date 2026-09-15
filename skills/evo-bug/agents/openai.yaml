@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO Bug 诊断"
+  short_description: "复现根因、最小修复并锁定回归"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 技术顾问"
+  short_description: "资深工程师与架构师级 Repository 指导"
+policy:
+  allow_implicit_invocation: false

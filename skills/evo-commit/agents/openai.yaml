@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO Git 提交"
+  short_description: "创建 AI 可读 Commit，并仅在授权时推送"
+policy:
+  allow_implicit_invocation: false

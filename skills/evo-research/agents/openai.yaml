@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 技术研究"
+  short_description: "基于最新高可信来源解决外部技术问题"
+policy:
+  allow_implicit_invocation: true

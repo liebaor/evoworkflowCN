@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 需求变更"
+  short_description: "用 Delta 管理中途需求与方向变化"
+policy:
+  allow_implicit_invocation: false

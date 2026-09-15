@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 项目接入"
+  short_description: "建立固定 .evo 工作区并迁移工程知识"
+policy:
+  allow_implicit_invocation: false

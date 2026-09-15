@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO TDD"
+  short_description: "用有效红绿重构驱动行为实现"
+policy:
+  allow_implicit_invocation: true

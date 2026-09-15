@@ -1,0 +1,55 @@
+name: Validate EVOworkflow CN
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate version
+        run: |
+          test "$(cat VERSION)" = "1.0.0"
+          grep -q '^# EVOworkflow 1.0' README.md
+      - name: Validate canonical skills
+        shell: bash
+        run: |
+          set -euo pipefail
+          skills=(
+            ask-evo evo-setup evo-init evo-advisor evo-grill-with-docs evo-research
+            evo-spec evo-plan evo-implement evo-tdd evo-change evo-bug evo-verify
+            evo-review evo-finish evo-goal evo-commit evo-recover
+          )
+          count=$(find skills -mindepth 1 -maxdepth 1 -type d -name '*evo*' | wc -l | tr -d ' ')
+          test "$count" = "18"
+          for skill in "${skills[@]}"; do
+            test -f "skills/$skill/SKILL.md"
+            test -f "skills/$skill/agents/openai.yaml"
+            grep -q '^name: ' "skills/$skill/SKILL.md"
+            grep -q 'short_description:' "skills/$skill/agents/openai.yaml"
+            grep -q "$skill" skills/ask-evo/SKILL.md || test "$skill" = "ask-evo"
+            grep -q "$skill" README.md
+          done
+      - name: Validate fixed workspace contract
+        run: |
+          for p in '.evo/project.md' '.evo/context.md' '.evo/goal.md' '.evo/decisions/' '.evo/specs/' '.evo/plans/' '.evo/research/'; do
+            grep -Fq "$p" README.md
+          done
+          grep -Fq 'Convention over discovery' docs/architecture.md
+          grep -Fq 'Brownfield' docs/knowledge-model.md
+      - name: Validate key behavior contracts
+        run: |
+          grep -Fq '事实是 Agent 的工作' skills/evo-grill-with-docs/SKILL.md
+          grep -Fq 'Fresh-Agent Test' skills/evo-plan/SKILL.md
+          grep -Fq '有效 RED' skills/evo-tdd/SKILL.md
+          grep -Fq 'PASS' skills/evo-verify/SKILL.md
+          grep -Fq 'Intent' skills/evo-review/SKILL.md
+          grep -Fq 'one repository, one active goal' skills/evo-goal/SKILL.md
+          grep -Fq '默认 **不 Push**' skills/evo-commit/SKILL.md
+      - name: Ensure no central runtime is introduced
+        run: |
+          test ! -d src
+          test ! -f package.json
+          test ! -d node_modules

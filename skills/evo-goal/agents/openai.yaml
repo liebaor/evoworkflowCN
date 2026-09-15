@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 连续目标"
+  short_description: "持续执行已准备好的计划直到完成"
+policy:
+  allow_implicit_invocation: false

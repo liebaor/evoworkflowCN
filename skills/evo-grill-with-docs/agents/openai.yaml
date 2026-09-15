@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 需求深挖"
+  short_description: "用决策树澄清重大需求与架构选择"
+policy:
+  allow_implicit_invocation: false

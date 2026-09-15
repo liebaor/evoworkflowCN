@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 验证"
+  short_description: "逐条 Acceptance 给出 PASS/FAIL/UNVERIFIED"
+policy:
+  allow_implicit_invocation: false

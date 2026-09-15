@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 收尾"
+  short_description: "让实现、文档和长期知识收敛一致"
+policy:
+  allow_implicit_invocation: false

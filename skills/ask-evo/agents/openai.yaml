@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 下一步"
+  short_description: "读取项目状态并推荐唯一下一步"
+policy:
+  allow_implicit_invocation: false

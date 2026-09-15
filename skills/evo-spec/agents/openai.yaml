@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 规格"
+  short_description: "把已确定需求综合成可验证 Working Spec"
+policy:
+  allow_implicit_invocation: false

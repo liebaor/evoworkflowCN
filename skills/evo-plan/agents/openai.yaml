@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO 实施计划"
+  short_description: "拆成 Fresh Agent 可独立执行的垂直切片"
+policy:
+  allow_implicit_invocation: false

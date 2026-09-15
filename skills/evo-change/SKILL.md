@@ -5,10 +5,10 @@ description: 当工作已经开始后，Accepted Intent 发生变化时，更新
 
 # EVO Change
 
-## 先读取
+## Read first
 `.evo/project.md`、`.evo/context.md`、Active Spec/Plan/Goal、相关 Decisions、当前 Implementation/Tests。
 
-## 分类
+## Classify
 - Clarification：文字澄清，Accepted Outcome 不变。
 - Living revision：尚未完成的 Scope/Behavior/Acceptance 改变。
 - Evidence-driven refinement：新观察事实解决 Unknown。
@@ -18,7 +18,7 @@ description: 当工作已经开始后，Accepted Intent 发生变化时，更新
 ## Delta
 对 Outcome、Non-goals、Acceptance、Rationale、Code/Contracts、Tests/Evidence、Current Docs、Migration/Compatibility 和 Decision Ownership，逐项标记 **retain / revise / remove / add**。
 
-## 写入
+## Write
 - 未完成 Intent → 修改同一个 `.evo/specs/<change>.md`；
 - Plan 受影响 → 修改 `.evo/plans/<change>.md`；
 - Stable reversal → 新建并互相链接 `.evo/decisions/`，不要重写历史；
@@ -29,5 +29,5 @@ description: 当工作已经开始后，Accepted Intent 发生变化时，更新
 ## Human Stop
 引入新产品方向、付费/外部服务、隐私/安全暴露、兼容性损失、破坏性数据变更或重大架构边界前必须询问人。
 
-## 输出
+## Output
 提供简洁 Delta 表，并说明哪些 Artifacts/Evidence 仍然有效。

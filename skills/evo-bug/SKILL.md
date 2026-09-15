@@ -5,10 +5,10 @@ description: 通过紧凑 Failing Feedback Loop、Root-cause Analysis、最小�
 
 # EVO Bug
 
-## 先读取
+## Read first
 `.evo/project.md`、`.evo/context.md`、相关 Spec/Decision、Source/Tests 和 Environment Details。
 
-## 循环
+## Loop
 1. 明确 Observed vs Expected Behavior 和 Environment。
 2. 通过最窄的真实 Entry Path 复现。
 3. 建立一个会在该 Bug 上变红的紧凑反馈回路。可复现时，不要在没有有用信号前大范围理论推演。
@@ -23,5 +23,5 @@ Production/External Boundary 不可用时，该边界标记 UNVERIFIED，不能�
 
 如果 Bug 改变 Accepted Intent → `evo-change`；如果暴露长期可复盘规则 → 更新 `.evo/decisions/`。
 
-## 输出
+## Output
 报告 Reproduction、Root Cause、Fix、Regression Evidence 和剩余 UNVERIFIED Boundary。

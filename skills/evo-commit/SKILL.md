@@ -5,7 +5,7 @@ description: 为当前 bounded EVO 工作创建 AI-readable Git Commit，并在�
 
 # EVO Commit
 
-## 先读取
+## Read first
 `git status`、相对目标 Base/Checkpoint 的 Diff、存在时的 `.evo/goal.md`、当前 Plan/Spec，以及真实存在的 Verification/Review Results。
 
 ## Preflight
@@ -48,5 +48,5 @@ Context:
 
 普通 Feature Branch 使用 Non-force Push，必要时设置 Upstream。除非单独明确授权，绝不 Force Push、Push 到意外/默认受保护 Branch、Rewrite History 或 Bypass Hooks。
 
-## 输出
+## Output
 返回 Commit SHA/Subject、Files/Scope、Message 中代表的 Verification、剩余 Working-tree Changes，以及执行过 Push 时的结果/Remote Branch。

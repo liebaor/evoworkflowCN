@@ -46,6 +46,8 @@ API 文档、部署说明、用户/运维文档等正式项目文档仍保留在
 
 每个面向用户的 Skill 都应明确：Use when、Do not use when、Read first、Workflow、Stop/Escalate、Output、Final checks。
 
+中文版本地化规则：`SKILL.md` 的 Markdown 结构标题保持英文，并尽量与英文主仓使用相同标题（如 `Purpose`、`Read first`、`Workflow`、`Output`、`Boundary`）；`name`/Skill ID 保持英文；`description` 和正文说明使用中文。不要翻译 Skill 的结构标题。
+
 标准 Skill 集合记录在 README 和 `docs/skill-contract.md`。任何 Skill 的新增、删除、改名或职责边界变化，都必须在同一次变更中同步 `ask-evo`、README、workflow 文档、evals 和 CI。
 
 `evo-goal` 是 Skill 级编排，不是运行时：一个 Repository、一个 Active Goal、一个 Writer。它可以反复应用 Implement/TDD/Verify/Bug/Review/Commit 契约，但重大决策仍必须交给人。

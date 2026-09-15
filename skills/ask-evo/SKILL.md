@@ -5,14 +5,14 @@ description: 读取当前 Repository，路由到唯一最合适的下一个 EVO 
 
 # Ask EVO
 
-## 目的
+## Purpose
 基于 Repository 证据重建当前情况，并且只推荐一个下一步 Skill。
 
-## 先读取
+## Read first
 1. 检查 `.evo/project.md` 和固定 `.evo/` 目录是否存在。
 2. 如果存在，读取 `.evo/project.md`、`.evo/context.md`、存在时的 `.evo/goal.md`、相关 Spec/Plan/Decisions、Git status/diff/history，以及当前 Tests/CI 证据。
 
-## 路由规则
+## Routing
 - `.evo/` 缺失或结构不完整 → `evo-setup`。
 - 工作区存在，但项目结构/build/test/pattern 尚未理解 → `evo-init`。
 - 用户需要资深工程/架构指导 → `evo-advisor`。
@@ -33,8 +33,8 @@ description: 读取当前 Repository，路由到唯一最合适的下一个 EVO 
 
 小型机械修改如果不涉及长期行为、Contract、架构、格式、测试策略或 Decision，可直接实现并做聚焦检查。
 
-## 输出
+## Output
 报告当前目标、已确认事实、Active `.evo/` Owner、重大 Unknown、实际进度、Blocker，以及一个唯一下一 Skill 和理由。
 
-## 最终检查
+## Final checks
 本 Skill 不修改文件、不实现功能，也不在内部执行目标 Skill。

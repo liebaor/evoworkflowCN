@@ -32,6 +32,19 @@ jobs:
             grep -q "$skill" skills/ask-evo/SKILL.md || test "$skill" = "ask-evo"
             grep -q "$skill" README.md
           done
+      - name: Validate CN Skill heading convention
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          bad = []
+          for path in Path('skills').glob('*/SKILL.md'):
+              for lineno, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
+                  if re.match(r'^#{1,6}\s+', line) and re.search(r'[\u4e00-\u9fff]', line):
+                      bad.append(f'{path}:{lineno}: {line}')
+          if bad:
+              raise SystemExit('Chinese Markdown headings are not allowed in CN SKILL.md files:\n' + '\n'.join(bad))
+          PY
       - name: Validate fixed workspace contract
         run: |
           for p in '.evo/project.md' '.evo/context.md' '.evo/goal.md' '.evo/decisions/' '.evo/specs/' '.evo/plans/' '.evo/research/'; do

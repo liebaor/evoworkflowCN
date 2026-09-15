@@ -5,18 +5,18 @@ description: 在一个 Repository 内连续执行已准备好的多 Slice Plan �
 
 # EVO Goal
 
-## 目的
+## Purpose
 在没有独立 Workflow Runtime 的情况下提供受控连续执行。
 
 编排边界必须明确：**one repository, one active goal, one writer**。EVO Goal 不是 Fleet Scheduler，也不是 Multi-repository Runtime。
 
-## 前置条件
+## Preconditions
 - `.evo/` 已初始化；
 - Owning Spec 和 `.evo/plans/<change>.md` 已存在，重大 Human Decision 已确定；
 - 一个 Checkout 只有一个 Writer；
 - 不存在另一个 ACTIVE Goal。
 
-## 启动 / 恢复
+## Start / resume
 创建或更新 `.evo/goal.md`：
 
 ```markdown
@@ -48,7 +48,7 @@ S1
 
 从 Repository Evidence 恢复，不依赖 Chat Memory。
 
-## 执行循环
+## Execution loop
 对下一个未完成 Slice：
 1. 重新读取 Slice、Governing Spec/Decisions 和相关 Source。
 2. 应用 `evo-implement`；存在稳定 Behavior Seam 时应用 `evo-tdd`。
@@ -60,12 +60,12 @@ S1
 8. Execution Policy 允许时，用 `evo-commit` 做 Commit-only Checkpoint。
 9. 继续下一个 Ready Slice。
 
-## 必须停下来找人的情况
+## Stop for human authority
 需要未授权产品方向、付费/外部服务、重大隐私/安全暴露、破坏性/不可逆数据变更、Compatibility Break、重大架构边界、受保护凭据/生产授权，或 Spec 自身矛盾且 Repository Evidence 无法解决时，必须停止。
 
 反复失败且已没有新的 Diagnostic Hypothesis/Evidence Path 时也停止，汇总尝试而不是死循环。
 
-## 最终循环
+## Final loop
 全部 Slices 完成后：
 1. 对整个 Spec Acceptance 和真实 Consumer Path 做 Full `evo-verify`。
 2. 尽可能做独立 `evo-review`。
@@ -74,5 +74,5 @@ S1
 5. `evo-commit` 做最终交付 Commit。
 6. 只有 `.evo/goal.md` 明确 `push: true` 或用户明确要求时才 Push。
 
-## 输出
+## Output
 完成时报告 Objective、完成 Slices、Final Evidence、Review Outcome、创建的 Commits、Push Status 和 Accepted Limitations。

@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO Plan Review"
+  short_description: "在执行前检查 Ticket Graph 是否遵循现有 Repository"
+policy:
+  allow_implicit_invocation: false

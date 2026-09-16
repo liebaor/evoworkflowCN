@@ -1,5 +1,5 @@
 interface:
-  display_name: "EVO 上下文恢复"
-  short_description: "从 .evo 和 Git 恢复当前工作状态"
+  display_name: "EVO Recover"
+  short_description: "从 Repository、Tracker、Git 和 Evidence 恢复中断工作"
 policy:
   allow_implicit_invocation: false

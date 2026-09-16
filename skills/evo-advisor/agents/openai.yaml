@@ -1,5 +1,5 @@
 interface:
-  display_name: "EVO 技术顾问"
-  short_description: "资深工程师与架构师级 Repository 指导"
+  display_name: "EVO Advisor"
+  short_description: "基于当前 Repository 提供资深工程与架构建议"
 policy:
   allow_implicit_invocation: false

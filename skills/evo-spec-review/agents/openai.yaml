@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO Spec Review"
+  short_description: "在 Ticketing 前检查 Spec 的 Repository 与 Framework Fit"
+policy:
+  allow_implicit_invocation: false

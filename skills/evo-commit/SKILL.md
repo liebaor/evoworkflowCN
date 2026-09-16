@@ -1,52 +1,76 @@
 ---
 name: evo-commit
-description: 为当前 bounded EVO 工作创建 AI-readable Git Commit，并在明确授权时可选 Push。适用于已验证工作、Goal Checkpoint，或用户要求 Commit/Push。Commit 记录状态，不证明正确性。
+description: 将已经理解清楚的 coherent engineering checkpoint 记录到 Git，并只执行明确授权的 Push；Commit 只描述状态，永远不创造正确性。
+compatibility: "Codex、Claude Code、OpenCode；需要 Git"
+disable-model-invocation: true
+metadata:
+  opencode/autoinvoke: "false"
 ---
 
 # EVO Commit
 
+## Core rule
+
+**Commit describes state. It does not create state.**
+
+Commit 记录已经存在的 Implementation/Evidence/Review Facts。它不能把 FAIL/UNVERIFIED/WIP 变成 Completed Work。
+
 ## Read first
-`git status`、相对目标 Base/Checkpoint 的 Diff、存在时的 `.evo/goal.md`、当前 Plan/Spec，以及真实存在的 Verification/Review Results。
+
+读取 Git status/diff、Owning Spec/Ticket、实际 Verification/Review Results、Repository Commit Convention，以及 Active Goal Execution Envelope。
 
 ## Preflight
-1. 确认 Diff 属于一个一致 Goal/Slice；不要把无关用户工作一起提交。
-2. 检查明显 Secrets、Credentials、Generated Junk、Accidental Large Files。
-3. 区分 Verified Completion 与 WIP。缺 Evidence 不一定禁止用户明确要求的 Checkpoint Commit，但 Message 不能宣称完成。
-4. 有 Repository Commit Convention 时遵守它。
+
+- Checkpoint 限定在一个容易理解的 Ticket/Stage/Fix/Final Convergence。
+- 能安全分离时排除无关 User Changes；Scope 无法分离时停止。
+- 检查明显 Credential/Secret、Generated Junk、Accidental Large Files。
+- 区分 Verified Completion 与 Deliberate WIP/Error Checkpoint。
+- Repository 有既有 Commit Convention 时遵守它。
 
 ## Message
-优先使用面向 Outcome 的 Subject：
+
+优先使用简洁 Outcome-oriented Subject：
 
 ```text
 <type>(<scope>): <outcome>
 ```
 
-需要时使用便于人和未来 Agent 理解的 Body：
+确有价值时再加入：
 
 ```text
-Implements:
-- S3 ...
-- AC-4 ...
+Context:
+- <owning ticket/spec>
+
+Completed:
+- <observable outcome>
 
 Verified:
-- <实际执行的 command/path>
+- <actual executed command/path/status>
 
-Context:
-- .evo/specs/...
-- .evo/plans/...
+Limitations:
+- <meaningful limitation>
+
+Next:
+- <next tracker work or human action>
 ```
 
-禁止伪造 `Verified` 条目。
+绝不能伪造 `Verified`。
 
-## Commit
-只 Stage 目标文件并 Commit；完成后重新读取 Status。
+## Commit authorization
 
-## Push
-默认 **不 Push**。仅在以下情况 Push：
+用户明确要求 Commit，或处于已批准的 `evo-goal` Commit Policy 内，即授权 Scope 内普通 Commit。否则只准备 Message/Scope，并在真正创建 Commit 前请求授权。
+
+## Push policy
+
+默认 **no push**。
+
+只有以下情况 Push：
+
 - 用户明确要求；或
-- Active `.evo/goal.md` 明确授权 `push: true`。
+- Active Goal Execution Envelope 已授权该 Feature Branch/Remote 的 `final-only` / `per-ticket`。
 
-普通 Feature Branch 使用 Non-force Push，必要时设置 Upstream。除非单独明确授权，绝不 Force Push、Push 到意外/默认受保护 Branch、Rewrite History 或 Bypass Hooks。
+正常 Push 必须 non-force。Force Push、History Rewrite、Unexpected/Default/Protected Branch、Merge、Tag、Release、Deploy 即使 Goal 允许普通 Push，也需要单独明确授权。
 
 ## Output
-返回 Commit SHA/Subject、Files/Scope、Message 中代表的 Verification、剩余 Working-tree Changes，以及执行过 Push 时的结果/Remote Branch。
+
+报告 Commit SHA/Subject、Included Scope、Represented Verification/Limitations、Remaining Worktree Changes，以及发生 Push 时的 Remote/Branch/Result。

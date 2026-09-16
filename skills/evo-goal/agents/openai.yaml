@@ -1,5 +1,5 @@
 interface:
-  display_name: "EVO 连续目标"
-  short_description: "持续执行已准备好的计划直到完成"
+  display_name: "EVO Goal"
+  short_description: "在批准边界内持续执行 reviewed Ticket Graph 直到完成"
 policy:
   allow_implicit_invocation: false

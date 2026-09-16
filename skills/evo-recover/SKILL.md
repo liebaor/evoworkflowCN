@@ -1,24 +1,47 @@
 ---
 name: evo-recover
-description: 从固定 `.evo/` 工作区、Git 和当前 Repository Evidence，为 Fresh/Interrupted Agent 或 Session 重建已有 EVO 工作上下文。已有工作但 Chat Context 丢失时使用；不要用于第一次接入项目。
+description: 在 Session 中断或切换 Agent/Harness 后，从 Repository Instructions、Tracker、Conformance Gates、Git 和 Evidence 重建真实当前状态，不依赖 Chat Memory 或 EVO State Database。
+compatibility: "Codex、Claude Code、OpenCode；Tracker + Git aware"
+disable-model-invocation: true
+metadata:
+  opencode/autoinvoke: "false"
 ---
 
 # EVO Recover
 
+## Purpose
+
+在 Context Loss 或 Agent/Harness Switching 后恢复真实工程状态。
+
 ## Read order
-1. `AGENTS.md` 和 `.evo/project.md`。
-2. `.evo/context.md`。
-3. 存在时的 `.evo/goal.md`，并跟随其中 Spec/Plan 链接。
-4. 相关 `.evo/decisions/` 和 Research。
-5. Git branch/status/recent commits/diff。
-6. 当前 Slice 周围的 Source/Tests 和可用 CI Results。
+
+1. Existing Standing Agent Instructions。
+2. `docs/agents/repository.md`、Issue-tracker/Domain Configuration 和 Linked Authorities。
+3. Active/Recent Parent Spec/Task，包括存在时的 `Repository Fit` / `evo-spec-review` State 和 Execution Envelope。
+4. Open/Closed Ticket Graph、Dependencies、Per-ticket Repository Fit、Claims、Verification/Commit Comments。
+5. 相关 `CONTEXT.md` / ADR。
+6. Git Branch/Status/Diff/Recent Commits 和 Tracker References。
+7. Current Source/Tests + Available CI/Runtime Results。
 
 ## Reconstruct
-确定 Objective/Non-goals、当前/最近 Goal Status、Completed vs Pending Slices、Last Verified Evidence、相关 Decisions/Patterns、Changed Files、Likely Next Seam 和 Material Blockers。
 
-Repository Evidence 优先于陈旧 Chat Summary。Progress Checkbox 没有对应 Git/Evidence 时不能当作 Proof。
+确定：
+
+- Current Objective/Non-goals；
+- Canonical Artifacts 和 Tracker Source；
+- Spec Conformance Gate 是 Current/Missing/Blocked/Stale；
+- Executable Ticket Frontier 在最近重大变化后是否已通过 `evo-plan-review`；
+- 有 Commit/Evidence 支持的 Completed Work；
+- Open Ready Frontier 和 Blocked Work；
+- Uncommitted/Staged Changes 及其可能 Owning Ticket；
+- Last Trustworthy Verification/Review Facts；
+- Material Blockers/Unknowns；
+- Repository Guidance、Representative Pattern、Reusable Capability Assumption 是否 stale/contradicted。
+
+Tracker Status 本身不能证明 Behavior。没有相应 Evidence/Commit 的 Checked/Closed Item 要明确指出。同样，即使 Blocker 都 Closed，如果 Repository Fit Gate 缺失/stale，Open Ticket 也不是 Execution-ready。
 
 ## Output
-生成紧凑 Handoff：Objective；Active Canonical Artifacts；实际 Completed/Verified；Pending；Blockers/Unknowns；唯一下一 EVO Skill。
 
-除非用户明确要求，否则不开始实现。
+输出紧凑 Handoff：Objective；Canonical Sources；Conformance Gate State；Completed/Verified；Worktree State；Ready Frontier；Blockers/Unknowns；Execution Policy；Exactly One Next Matt/EVO Skill。
+
+除非用户明确要求，不要开始 Implementation。

@@ -1,0 +1,5 @@
+interface:
+  display_name: "EVO Test"
+  short_description: "手工运行较完整的项目原生测试和关键用户流程"
+policy:
+  allow_implicit_invocation: false

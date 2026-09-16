@@ -1,5 +1,5 @@
 interface:
-  display_name: "EVO 收尾"
-  short_description: "让实现、文档和长期知识收敛一致"
+  display_name: "EVO Finish"
+  short_description: "把最终交付收敛到 Repository 的 Current Truth"
 policy:
   allow_implicit_invocation: false

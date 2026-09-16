@@ -1,40 +1,47 @@
 ---
 name: ask-evo
-description: 读取当前 Repository，路由到唯一最合适的下一个 EVO Skill。适用于用户询问“下一步做什么”“如何继续”“现在做到哪了”或“不知道该用哪个 EVO 流程”的场景。只读。
+description: 只负责判断当前软件工程场景下一步最适合使用哪个 Matt 或 EVO Skill，并且只推荐一个，不直接执行工作。
+compatibility: "Codex、Claude Code、OpenCode；建议同时安装 Matt engineering Skills"
+disable-model-invocation: true
+metadata:
+  opencode/autoinvoke: "false"
 ---
 
 # Ask EVO
 
 ## Purpose
-基于 Repository 证据重建当前情况，并且只推荐一个下一步 Skill。
+
+作为 Matt engineering Skills + EVO extensions 之上的只读路由器。根据当前真实 Repository / Tracker 状态，只推荐一个最合适的下一 Skill/capability。
 
 ## Read first
-1. 检查 `.evo/project.md` 和固定 `.evo/` 目录是否存在。
-2. 如果存在，读取 `.evo/project.md`、`.evo/context.md`、存在时的 `.evo/goal.md`、相关 Spec/Plan/Decisions、Git status/diff/history，以及当前 Tests/CI 证据。
+
+读取项目长期 Agent 指令、存在时的 `docs/agents/issue-tracker.md`、`docs/agents/domain.md`、`docs/agents/repository.md`、相关 Tracker 状态（包括 Repository Fit）、Git status 和用户当前意图。不要为了路由而创建缺失的项目产物。
 
 ## Routing
-- `.evo/` 缺失或结构不完整 → `evo-setup`。
-- 工作区存在，但项目结构/build/test/pattern 尚未理解 → `evo-init`。
-- 用户需要资深工程/架构指导 → `evo-advisor`。
-- 重大产品/架构决策不清楚 → `evo-grill-with-docs`。
-- 需要最新外部技术事实 → `evo-research`。
-- 已达成一致的非机械需求需要 Working Spec → `evo-spec`。
-- 已有 Spec/Intent，但缺 fresh-Agent 可执行 Slice → `evo-plan`。
-- 用户希望连续完成整个已准备 Plan → `evo-goal`。
-- 一个 bounded slice 已准备好 → `evo-implement`。
-- 用户明确要求 test-first，或该行为适合稳定测试 seam → `evo-tdd`。
-- 已接受 Intent 发生变化 → `evo-change`。
-- 已观察到失败，需要诊断根因 → `evo-bug`。
-- Acceptance 需要直接证明 → `evo-verify`。
-- 已验证工作需要独立 Intent/Engineering/Evidence 复核 → `evo-review`。
-- 已验证/复核工作需要知识收敛 → `evo-finish`。
-- 工作需要进入 Git 历史，或用户明确要求 Push → `evo-commit`。
-- 已有工作但当前 Session 上下文丢失 → `evo-recover`。
 
-小型机械修改如果不涉及长期行为、Contract、架构、格式、测试策略或 Decision，可直接实现并做聚焦检查。
+- Matt setup/config 缺失 → `setup-matt-pocock-skills`。
+- Repository 工程结构/Pattern/Capability 未理解，或 Guide 明显过期 → `evo-init`。
+- 用户需要基于真实 Repository 的高级工程/架构建议 → `evo-advisor`。
+- 产品/Domain 含义不清 → `grill-with-docs`；如果主要是 Domain language/modeling → `domain-modeling`。
+- 需要当前外部事实 → `research`。
+- 已稳定的意图需要形成 Spec → `to-spec`。
+- Canonical Spec 已存在，但在最近一次重大变化后没有通过 Repository Fit → `evo-spec-review`。
+- 已 Review 的 Spec 需要拆成 Agent-sized vertical tickets + blockers → `to-tickets`。
+- Ticket Graph 已存在，但在最近一次重大 Spec/Architecture/Capability 变化后没有通过 Repository Fit → `evo-plan-review`。
+- 工作过大/不确定，超出单 Session，需要先建立 Decision Map → `wayfinder`。
+- 一个 bounded reviewed ticket 需要按 EVO delivery semantics 实现 → `evo-implement`。
+- Accepted intent 已变化 → `evo-change`。
+- 复杂 Bug / performance regression 需要系统诊断 → `diagnosing-bugs`。
+- Acceptance claim 需要直接证据 → `evo-verify`。
+- Worktree/branch 需要交付前 Conformance Review → `evo-review`。
+- 用户明确要求进行一次更广的测试/用户模拟 → `evo-test`。
+- 已通过 Conformance Review 的 Ticket Graph 需要持续执行 → `evo-goal`。
+- 最终已 Verify/Review 的工作需要 Current Truth convergence → `evo-finish`。
+- 一个 coherent checkpoint 需要 Commit 或已授权 Push → `evo-commit`。
+- Fresh/interrupted Session 需要重建当前工作 → `evo-recover`。
+
+如果最佳路线是当前 Session 无法加载的 Matt Skill，返回 `MATT_SKILL_REQUIRED: <id>`，不要用 EVO 模仿版替代。
 
 ## Output
-报告当前目标、已确认事实、Active `.evo/` Owner、重大 Unknown、实际进度、Blocker，以及一个唯一下一 Skill 和理由。
 
-## Final checks
-本 Skill 不修改文件、不实现功能，也不在内部执行目标 Skill。
+返回 `Next: <skill-id>`，再用 1–3 句话说明基于当前 Repository/Tracker Evidence 的理由。不要执行下一 Skill。

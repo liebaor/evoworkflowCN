@@ -1,5 +1,5 @@
 interface:
-  display_name: "EVO 下一步"
-  short_description: "读取项目状态并推荐唯一下一步"
+  display_name: "Ask EVO"
+  short_description: "判断当前工程状态下一步应该使用哪个 Skill"
 policy:
   allow_implicit_invocation: false

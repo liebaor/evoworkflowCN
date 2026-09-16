@@ -1,27 +1,35 @@
 ---
 name: evo-finish
-description: 把已经 Verify 和 Review 的工作收敛成一致的 Repository Current Truth。Implementation 通过所需验证与复核后、最终 Commit/Delivery 前使用。
+description: 将已经 Verify/Review 的交付结果收敛为 Repository Current Truth，只更新真正的 Owners：Current Docs、Domain Context、ADR 和 Tracker State。
+compatibility: "Codex、Claude Code、OpenCode；Repository/Tracker-aware"
+disable-model-invocation: true
+metadata:
+  opencode/autoinvoke: "false"
 ---
 
 # EVO Finish
 
 ## Preconditions
-Required Acceptance 已 PASS，或责任人明确接受 UNVERIFIED；Blocking Review Findings 已解决。
+
+Required Parent Acceptance 已 `PASS`，或相关 `UNVERIFIED` 已被明确接受，并且没有 `evo-review` Blocking Findings。
 
 ## Read first
-`.evo/project.md`、`.evo/context.md`、Active 时的 `.evo/goal.md`、Owning Spec/Plan、相关 Decisions、Diff、Current Project Docs、Verification/Review Results。
+
+读取 Source Spec/Parent Task、Ticket Graph/Comments、Final Verification/Review、Current Docs/Contracts、`CONTEXT.md`/Configured Domain Docs、ADR Convention、Repository Guide 和 Git Diff/History。
 
 ## Workflow
-1. Shipped Behavior 改变时更新 Current Project Docs/Contracts。
-2. 只把稳定领域 Fact/Vocabulary 更新到 `.evo/context.md`。
-3. 对应该长期保留、能超越 Working Spec 的 Rationale 创建/更新 `.evo/decisions/`。
-4. 清除陈旧 Future-tense Claim，并让 Working Spec/Plan 与实际 Shipped 内容一致。其唯一长期信息已被 Decisions/Current Docs/Goal 吸收后，可删除 Working Artifact；Git 保存历史。
-5. Navigation、Module、Command 或稳定 Entry Path 改变时更新 `.evo/project.md`。
-6. 当前 Goal 完成时，把 `.evo/goal.md` 标记 COMPLETE，并写最终 Evidence Summary 与 Remaining Accepted Limitations。
-7. 清理 Spec/Plan 后检查所有引用/链接。
+
+1. 只有 Shipped Behavior 真正改变时才更新 Current Product/API/Architecture/Operator Docs。
+2. Domain Context 只记录 Stable Domain Vocabulary/Facts，不写成 Feature Log。
+3. 只有满足 Repository Durable-decision Threshold 才创建/Supersede ADR。
+4. 按 Tracker Protocol Reconcile/Close Parent Spec/Task 和 Remaining Tickets。删除与 Shipped Reality 冲突的过期 Future-tense Claims；历史讨论留在 Tracker/Git，不复制到别处。
+5. 只有 Commands、Module Boundaries、Authorities 或 Representative Patterns 实质变化时才刷新 `docs/agents/repository.md`。
+6. 清理 Document/Task 后检查 References。
 
 ## Boundary
-Finish 不创造缺失 Evidence、不做 Code Review，也不宣称 Git Delivery 已发生。
+
+Finish 不制造缺失 Implementation Evidence，不执行 Code Review，也不 Commit、Push、Merge、Tag、Release 或 Deploy。
 
 ## Output
-报告修改的 Current-Truth Surface、保留的 Durable Decisions、删除/保留的 Working Artifacts，以及有意留下的未解决项。随后路由到 `evo-commit`。
+
+报告改变的 Current-truth Owners、保留/新增 Durable Decisions、Reconciled Tracker Artifacts、Repository Guide Change 和明确接受的 Limitations。Finish 产生 Deliverable Diff 时下一步 `evo-commit`。

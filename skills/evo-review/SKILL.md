@@ -1,27 +1,55 @@
 ---
 name: evo-review
-description: 从 Intent、Engineering、Evidence 三个维度独立复核已验证工作。适用于 `evo-verify` 之后，或对 Branch/Diff 按 EVO Spec 和 Repository 标准做 Review。默认只读。
+description: 在 EVO Delivery 前审查未提交或已提交工作，覆盖 Repository Conformance、Accepted Intent 与 Evidence，并能看到上游 commit-range review 可能看不到的 Worktree Change。
+compatibility: "Codex、Claude Code、OpenCode；Git worktree 或 commit diff"
+disable-model-invocation: true
+metadata:
+  opencode/autoinvoke: "false"
 ---
 
 # EVO Review
 
-## Independence
-Harness 支持时优先使用 Fresh Context/Subagent，避免 Implementation Assumption 主导 Review。
+## Purpose
+
+提供独立的交付前 Review，同时支持未提交 Goal Output 和 Committed Diff。
+
+如果 fixed-point committed-diff Workflow 更合适，直接使用上游 `code-review`。本 Skill 存在是因为 EVO Goal 通常在 `evo-commit` 前 Review，需要看到 Worktree/Staged Changes。
 
 ## Read first
-先重新读取 User Outcome 与 Owning `.evo/specs/` / Decisions，再看 Implementation Details。固定一个 Git Point 检查 Diff，然后读取 Verification Evidence。
 
-## Three axes
+读取 Owning Spec/Ticket、Repository Fit、`docs/agents/repository.md`、Standards/ADR、相关 Reference Implementations 和 Reusable Capability Owners、Verification Result、Git status，以及完整 Intended Diff。
+
+## Axes
+
+### Repository Conformance
+
+检查是否遵守 Documented Rules、Module Boundaries、Existing Contracts 和声明的 `REUSE/EXTEND/NEW`。
+
+重点检查：
+
+- 没有充分理由却偏离 Representative Implementation；
+- 已有 Project/Framework Capability 时又建立 Duplicate Helper/Utility/Component；
+- 平行 response、pagination、auth/permission、persistence、logging/audit、validation、state 或 infrastructure mechanism；
+- Responsibility 放错层或 Dependency Direction 违规；
+- 遵循通用 Framework Advice 却忽视当前 Repository 的真实 Framework Usage；
+- 绕过 Capability Before Creation 的 `NEW` Abstraction。
+
 ### Intent
-行为是否符合 Outcome、Non-goals 和 Acceptance？请求路径是否真正可达？Negative Guarantee 是否仍被违反？
 
-### Engineering
-是否复用 Repository Pattern、尊重 Architecture/Security/Data/Compatibility Boundary、避免重复机制并保持 Scope 一致？
+Diff 是否完整满足 Accepted Outcome/Non-goals，且没有 Missing Behavior 或 Scope Creep？
 
 ### Evidence
-实际执行的 Checks 是否覆盖 Claims 和真实 Consumer Path？是否有重要 Boundary 只是 Inferred？
 
-Finding 分为 Blocking、Important non-blocking、Optional。不要为了填模板制造 Finding。
+现有 Verification 是否真的覆盖重要 Claim 和真实 Consumer Path？明确指出只是 Inference 的 Claim。
+
+Finding 分类：`BLOCKING`、`IMPORTANT`、`OPTIONAL`。不要为了填模板硬造问题。
+
+Duplicate/Parallel Cross-cutting Capability 通常是 `BLOCKING`，除非 Accepted Spec/ADR 明确授权新 Architecture。
+
+## Independence
+
+Harness 支持 Fresh Context/Subagent 时优先使用独立 Review Context，但不要绑定某一种 Subagent API。
 
 ## Output
-先给 Findings + Evidence，再说明 Readiness 和 Uncertainty。Read-only Review 不修改 Implementation。Blocking Finding → Implement/Bug/Change；Clean Review → `evo-finish`。
+
+Findings First；每条尽量关联 Evidence/Path/Acceptance。随后报告 Readiness、Repository Fit Conformance、Reused/New Capabilities 和 Remaining Uncertainty。Review 阶段不要修改 Implementation。

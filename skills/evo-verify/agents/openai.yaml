@@ -1,5 +1,5 @@
 interface:
-  display_name: "EVO 验证"
-  short_description: "逐条 Acceptance 给出 PASS/FAIL/UNVERIFIED"
+  display_name: "EVO Verify"
+  short_description: "用直接证据验证 Acceptance，并报告 PASS、FAIL 或 UNVERIFIED"
 policy:
   allow_implicit_invocation: false

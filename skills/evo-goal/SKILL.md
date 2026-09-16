@@ -1,6 +1,6 @@
 ---
 name: evo-goal
-description: 在 Repository Conformance Gates 之后，在批准的 Execution Envelope 内持续执行 prepared tracker-backed Ticket Graph：Implement、Verify、Review、Commit、Close、Advance，直到完成或真正的语义/风险边界停止。
+description: "在 Repository Conformance Gates 之后，在批准的 Execution Envelope 内持续执行 prepared tracker-backed Ticket Graph：Implement、Verify、Review、Commit、Close、Advance，直到完成或真正的语义/风险边界停止。"
 compatibility: "Codex、Claude Code、OpenCode；Tracker Protocol + Git；可选 Matt tdd/diagnosing-bugs"
 disable-model-invocation: true
 metadata:

@@ -1,38 +1,43 @@
-# EVO Repository 知识模型
+# Repository knowledge model
 
-EVO 使用固定 `.evo/` 工作区，让每个 Agent 都知道工程记忆在哪里，不需要重新发现。
+EVOworkflow 2.0 遵循 **One Fact → One Owner**，复用 Repository 已有知识系统，不把所有内容搬进 EVO 专属目录。
 
-## 唯一 Owner
-
-| 问题 | 唯一 Owner |
+| Question | Primary owner |
 |---|---|
-| 这个项目是什么，如何导航/build/test/run？ | `.evo/project.md` |
-| 领域术语和稳定业务事实是什么意思？ | `.evo/context.md` |
-| 为什么做出一个长期技术/架构选择？ | `.evo/decisions/` |
-| 我们正在创建什么尚未完成的行为/设计？ | `.evo/specs/` |
-| 哪些 bounded slices 执行这项工作？ | `.evo/plans/` |
-| 哪些最新外部知识支持当前选择？ | `.evo/research/` |
-| 当前正在连续执行什么目标？ | `.evo/goal.md` |
-| 产品当前实际暴露什么？ | 项目源码 / contracts / current docs |
-| 什么可以机械证明行为？ | 项目 tests / runtime / CI |
-| 历史发生过什么？ | Git / PR history |
+| 项目长期 Agent 指令是什么？ | `AGENTS.md` / existing host instruction root |
+| Domain term 是什么意思？ | `CONTEXT.md` 或 Matt setup 配置的布局 |
+| 为什么做了一个 durable technical choice？ | Matt setup 配置的 ADR |
+| 这个 Change 应该实现什么？ | canonical Spec / parent issue |
+| 还剩什么工作、谁阻塞谁？ | configured Issue Tracker / local ticket files |
+| Repository 怎么组织，新代码应该像谁？ | `docs/agents/repository.md` + linked authorities/source |
+| 产品现在真实做什么？ | Source / contracts / current product docs |
+| 什么证明行为正确？ | Tests / runtime observation / CI / durable verification notes |
+| 历史发生了什么？ | Git / PR / Tracker history |
 
-## Brownfield 迁移
+## Repository guide
 
-EVO 不为旧的工程记忆目录保留路径映射。`evo-setup` 会把已有 ADR/Decision、Working Spec/RFC、Implementation Plan、Research 和领域 Context 迁移到固定位置并更新引用。
+`evo-init` 创建/刷新 `docs/agents/repository.md`，包含指针和简洁结论：
 
-不要因为文档包含技术内容就全部迁移。API Reference、部署说明、用户/运维指南、当前公开架构文档继续保留为项目文档。如果其中包含长期 Decision rationale，则提取该理由到 `.evo/decisions/`，Current-State 文档仍留在原位置。
+- authority documents；
+- build/test/run commands；
+- architecture/module boundaries；
+- representative consumer paths；
+- reusable framework/project capabilities；
+- reference implementations by concern；
+- known inconsistencies / meaningful unknowns。
 
-## One fact, one owner
+它不能复制整份 coding standards、domain glossary、ADR rationale 或 source code。
 
-避免维护多个可变副本。当前行为属于源码/contracts/current docs；理由属于 Decisions；未完成目标属于 Specs；执行拆分属于 Plans；外部证据属于 Research。
+## Conformance ownership
 
-## Goal 不是隐藏状态
+Canonical Spec 自己拥有方案层 `Repository Fit`；canonical Ticket 自己拥有执行层的 Module Fit、Reference、Capability reuse、`REUSE/EXTEND/NEW` 和 verification approach。`evo-spec-review` / `evo-plan-review` 修改真正 owner，不创建旁路 Review 文档。
 
-`.evo/goal.md` 必须保持可读，可包含 Objective、Spec/Plan 链接、Execution Policy、Progress、Current Slice、最近 Verify 结果和 Blocker。它是执行产物，不是机器专用状态库。
+## Tracker owns progress
 
-一个 checkout 最多只有一个 Active Goal。Goal 完成后可以保留，直到下一个 Goal 覆盖；历史由 Git 保存。
+Ticket status、dependencies、claims、completion 只存在一个 Tracker。Goal 从真实 Tracker 重算 Frontier，而不是在其他文件镜像 `[x]`。
 
-## Fresh-session 规则
+Execution Envelope 可以简洁地持久化在 Parent Spec/Task，供新 Session 恢复 delivery policy，但不能变成第二套工作流数据库。
 
-一个全新的 Agent 应能通过读取 `AGENTS.md`、`.evo/project.md`、`.evo/context.md`、必要时的 `.evo/goal.md`、关联 Spec/Plan/Decisions、Git diff/history 以及当前 Tests/CI 证据恢复工作上下文。
+## Knowledge convergence
+
+`evo-finish` 在最终 Evidence/Review 后进行 knowledge gardening：只有 shipped behavior 真正改变时才更新 current docs、domain language、ADR；同时 reconcile Tracker artifacts，清理过期 future-tense claims。Git 保留历史。

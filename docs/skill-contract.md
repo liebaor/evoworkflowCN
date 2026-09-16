@@ -1,55 +1,65 @@
-# EVO Skill 契约
+# EVO Skill Contract
 
-每个 EVO Skill 都是一项可复用的工程能力，而不是一张原则说明纸。
+EVO 2.0 Skills 是围绕 Matt upstream 的集成契约。中文镜像翻译人类可读内容，但保持英文 canonical source 的 Skill IDs、结构、机器字段和工作流语义。
 
-## 必须明确的边界
+## Portable Skill shape
 
-一个 Skill 应明确说明：
+每个 EVO Skill 必须：
 
-1. **Purpose**：唯一职责。
-2. **Use when**：正向触发条件。
-3. **Do not use when**：不能吸收的相邻职责。
-4. **Read first / Preconditions**：行动前必须读取的 Repository 证据。
-5. **Workflow**：可重复执行的步骤。
-6. **Stop / Escalate**：何时超出本 Skill 权限并移交。
-7. **Repository writes**：允许修改哪些 `.evo/` 或项目表面。
-8. **Output**：下一位 Human/Agent 可以消费的结果。
-9. **Final checks**：交棒前必须满足什么。
+1. directory / `name` 使用 lowercase kebab-case；
+2. 提供清晰的中文 trigger-oriented `description`；
+3. 提供 `compatibility`，但不假设单一 Harness API；
+4. portable behavior 放在 `SKILL.md`；
+5. Codex policy 放在 `agents/openai.yaml`；
+6. OpenCode invocation policy 使用 `metadata.opencode/autoinvoke`；
+7. Claude Code user-invocation policy 使用 `disable-model-invocation`；
+8. 引用上游能力时使用 Skill ID，不写 `/command` 或 tool-call syntax。
 
-## 固定工作区
+## Translation shape
 
-Skills 必须直接使用：
+- 所有 Markdown headings 使用英文。
+- Frontmatter key、Skill name、路径、命令、代码/API identifier 保持英文。
+- `description` 和自然语言正文中文化。
+- UI `display_name` 视为标题，保持英文；`short_description` 中文化。
+- 法律文本不替换原文。
 
-```text
-.evo/project.md
-.evo/context.md
-.evo/goal.md
-.evo/decisions/
-.evo/specs/
-.evo/plans/
-.evo/research/
-```
+## Upstream capability dependency
 
-不要为 EVO 知识增加可配置替代路径。项目尚未采用该 Convention 时，路由到 `evo-setup`。
+EVO Skill 需要 Matt capability 时：
 
-## 角色边界
+- 优先使用当前 Harness 的 installed-Skill mechanism；
+- 不修改/覆盖同名 Matt Skill；
+- 必需能力不可用时返回 `MATT_SKILL_REQUIRED: <skill-id>`；
+- optional capability 不可用时，只执行更窄的 EVO 行为，并明确说明未应用的部分。
 
-- `evo-advisor` 负责建议，不负责实现。
-- `evo-grill-with-docs` 解决重大决策；事实由 Agent 自己调查。
-- `evo-research` 解决外部不确定性；Repository 内部事实优先本地读取。
-- `evo-spec` 综合已经确定的 Intent，不承担尚未解决的产品访谈。
-- `evo-plan` 生成 fresh-Agent 可独立执行的 Slices。
-- `evo-implement` 实现一个 Slice；Intent 改变时必须升级，而不是偷偷改计划。
-- `evo-tdd` 用行为测试驱动实现；`evo-verify` 在实现后证明 Acceptance。
-- `evo-review` 默认只读。
-- `evo-finish` 负责 Current Truth 收敛。
-- `evo-goal` 对已准备好的 Plan 做连续编排。
-- `evo-commit` 记录 Git 历史，只有授权后才能 Push。
+## Repository-conformance contract
 
-## Goal 规则
+Planning 与 implementation 都必须使用同一份 Repository Contract：
 
-Goal 可以调用/应用其他 Skill 的契约，但不能绕过它们的安全边界。重大决策仍属于 Human Authority。Worker 不能把自己的自我报告当成最终验收；必须依赖直接 Evidence，并在 Harness 支持时优先使用 fresh review context。
+- `evo-spec-review`：方案层确认 Architecture/Framework Fit；
+- `evo-plan-review`：每个 Ticket 确认 Module Fit、Representative pattern、Reusable capability、`REUSE/EXTEND/NEW`、Verification fit；
+- `evo-implement`：真正修改前重新打开 reference 和 capability owner；
+- `evo-review`：阻止没有授权的 parallel/duplicate abstraction。
 
-## Router 同步
+两个 standing rules：
 
-任何 Skill 集合或流程变化，都必须同步更新 `ask-evo`、README、workflow 文档、eval 场景和 CI。
+- **Reference Before Edit**
+- **Capability Before Creation**
+
+## Evidence contract
+
+Acceptance claim 只有三种状态：
+
+- `PASS`：直接证据已实际执行/观察，并支持 claim；
+- `FAIL`：直接证据与 claim 冲突；
+- `UNVERIFIED`：所需直接证据不可用或未运行。
+
+静态源码检查不能证明 runtime behavior；build/lint 只证明对应工具真正检查的规则。
+
+## Manual test contract
+
+`evo-test` 只能显式手工调用。它可以选择 Static、Focused behavior、Integration/API、Critical user journey 和风险相关检查，但不会为了满足流程默认安装新的 Test Framework。Browser/Application/External boundary 无法实际执行时必须 `UNVERIFIED`。
+
+## Git contract
+
+Commit 位于 implementation/evidence/review 下游。默认 **no push**。Goal 可以持久化 `final-only` / `per-ticket` 授权；Force push、history rewrite、protected/default branch、merge、tag、release、deploy 需要单独授权。

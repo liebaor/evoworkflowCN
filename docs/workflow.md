@@ -1,75 +1,119 @@
-# EVOworkflow 工作模型
+# EVOworkflow 2.0 Workflow
 
-## 项目接入
+## First adoption
 
 ```text
-安装 Skills
-→ evo-setup
-→ evo-init
-→ ask-evo
+install combined Matt + EVO Skills
+        ↓
+setup-matt-pocock-skills
+        ↓
+evo-init
+        ↓
+ask-evo
 ```
 
-`evo-setup` 建立固定工作区并迁移 Brownfield 工程记忆；`evo-init` 再学习真实代码库并填充 Project/Context 知识。
+Matt setup 负责 Issue Tracker 与 Domain Document 配置；EVO Init 负责语义理解“这个 Repository 实际应该怎么扩展”。
 
-## 标准功能路线
+## Planning
 
 ```text
-按需 advisor / grill / research
-→ spec
-→ plan
-→ implement（适合时使用 tdd）
-→ verify
-→ review
-→ finish
-→ commit [→ 授权后 push]
+grill-with-docs / domain-modeling / research / wayfinder
+        ↓
+to-spec
+        ↓
+evo-spec-review
+        ↓
+to-tickets
+        ↓
+evo-plan-review
 ```
 
-## 长时间执行路线
+EVO 不维护 `evo-spec`、`evo-plan`、`evo-research` 或 `evo-grill-with-docs` 的平行副本。
 
-Spec 和 Plan 准备好后：
+## One bounded delivery
 
 ```text
+ticket / bounded task
+        ↓
+evo-implement
+        ↓
+evo-verify
+        ↓
+evo-review
+        ↓
+evo-commit
+```
+
+`evo-implement` 适合时使用上游 `tdd`；复杂 observed failure 使用 `diagnosing-bugs`。
+
+## Continuous Goal
+
+```text
+approved Spec + conformance-reviewed ticket graph + Execution Envelope
+        ↓
 evo-goal
-  对每个 slice 循环：
-    implement
-    适合时 tdd
-    focused verify
-    失败则 fix 或 bug loop
-    策略允许时 checkpoint commit
-  全部完成后：
-    full verify
-    independent review
-    finish
-    final commit
-    optional push
+        │
+        ├─ choose ready frontier ticket
+        ├─ snapshot delivery base
+        ├─ evo-implement
+        ├─ evo-verify
+        ├─ diagnose/fix/reverify ordinary failures
+        ├─ evo-review
+        ├─ evo-commit
+        ├─ close/update ticket
+        └─ recompute frontier
+        ↓
+full evo-verify
+        ↓
+final evo-review
+        ↓
+evo-finish
+        ↓
+final evo-commit
+        ↓
+push only if pre-authorized
 ```
 
-普通代码/测试失败只要 Agent 还能获得新证据并继续，就不应停止 Goal。遇到重大人类决策、缺少授权/凭据、破坏性不可逆操作、目标互相矛盾，或反复失败且已经没有新的诊断路径时才停止。
+普通 build/test/lint/review failure 属于执行工作，不是打断人的理由。只有产品含义/风险边界变化、缺少 credentials/production authority、破坏性操作、或诊断已经没有新 Evidence Path 时停止。
 
-## TDD
+## Manual test
 
-TDD 是实现方法，不是最终 Acceptance 证明：
+`evo-test` 只能由用户显式触发：
 
-1. 选择一个公开行为 seam；
-2. 先写一个聚焦测试；
-3. 运行测试，确认失败原因确实是目标行为缺失/错误；
-4. 写最小实现使其变绿；
-5. 运行该测试和附近 Regression；
-6. 只在绿色状态下做不改变行为的 Refactor；
-7. 一次推进一个 vertical slice。
+```text
+evo-test <scope>
+        ↓
+reuse project-native checks/tests
+        ↓
+focused behavior + integration/API as relevant
+        ↓
+critical user journey when practical
+        ↓
+PASS / FAIL / UNVERIFIED
+```
 
-避免一次写完全部测试的横向切片，以及与实现细节强耦合的断言。
+它不属于默认 Goal，也不会默认安装新的 Test Framework。
 
-## Review 与 Finish
+## Requirement change
 
-Review 独立回答三个问题：
+```text
+accepted intent changes
+        ↓
+evo-change
+        ↓
+RETAIN / REVISE / REMOVE / ADD
+        ↓
+update canonical Spec / tickets / ADR / docs
+        ↓
+invalidate only affected evidence/conformance assumptions
+        ↓
+rerun affected gates
+        ↓
+recompute frontier
+        ↓
+resume implementation or Goal
+```
 
-- **Intent**：是否真正实现用户要求的 Outcome？
-- **Engineering**：是否安全、可维护，并符合当前 Repository？
-- **Evidence**：实际执行过的检查是否足以支持结论？
+## Recovery
 
-Finish 再让 Current Docs、`.evo/context.md`、Durable Decisions、Working Specs/Plans 与 Goal Progress 收敛，使下一个 Agent 读到一致的 Repository。
-
-## Delivery
-
-Commit 是交付历史步骤。它读取 Diff 与已验证上下文，写出 AI 可读的 Commit Message。Push 必须显式授权，绝不默认发生。
+Fresh Session 从 standing instructions、Repository Guide、Domain/ADR config、Tracker source/comments、Git status/log/diff、tests/CI 和 current code 恢复。Chat history 只是 optional context，不是 authority。

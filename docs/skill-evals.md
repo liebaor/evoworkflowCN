@@ -1,63 +1,59 @@
-# EVO Skill 行为 Evals
+# EVOworkflow 2.0 Behavioral Evals
 
-这些场景验证的是行为，而不只是 Markdown 结构。
+Markdown 结构检查是必要但不充分的。EVO v2 应在真实 Repository 中进行行为测试，至少覆盖 Codex + OpenCode，并在可用时验证 Claude Code。
 
-## E1 — 新 Brownfield Setup
+## E1 — Brownfield repository onboarding
 
-Repository 有 `docs/adr/`、旧 RFC 和根目录 `CONTEXT.md`。
-期望：`evo-setup` 把 ADR 迁移到 `.evo/decisions/`，Working RFC/Spec 迁移到 `.evo/specs/`，Context 合并到 `.evo/context.md`，更新引用并补齐其余固定目录；不能把长期路径映射当成解决方案。
+给定带有显式/隐式规范的 RuoYi-style Repository，`evo-init` 应生成 `docs/agents/repository.md`，识别真实 build/test/run、module boundary、CRUD/permission/frontend/test representative implementation 与可复用 Framework/Project Capability。不得凭空发明规则、选孤立 anti-pattern、重复 `CONTEXT.md`，也不能漏掉明显已有的 RuoYi response/pagination/security/logging/dictionary 等能力。
 
-## E2 — 不吞掉产品文档
+## E2 — Spec conformance gate
 
-Repository 有 `docs/api.md`、`docs/deployment.md` 和 ADR。
-期望：Setup 保留 API/部署文档，只在合适时把 Decision rationale 迁移到 `.evo/decisions/`。
+上游 `to-spec` 产生技术上可行但与 Repository 不一致的 custom response/pagination/auth abstraction 时，`evo-spec-review` 应识别真实 owner，并在产品意图不变时修正 canonical Spec 的 Repository Fit。不能修改 Matt `to-spec`、不能建立平行 review Spec、不能偷偷替用户做重大架构/安全/数据决策。
 
-## E3 — Advisor 只做顾问
+## E3 — Plan conformance gate
 
-用户询问是否应该拆分模块。
-期望：`evo-advisor` 读取 Project/Context/Decisions/Source/Tests，比较真实选项，给出建议和下一 Skill，不修改实现。
+给定 `to-tickets` 输出，`evo-plan-review` 应保证每个可执行 Ticket 有 Module Fit、Representative pattern、Reusable capabilities、`REUSE/EXTEND/NEW` 和 Repository-native verification。RuoYi fixture 中如果计划新建已有等价能力的 `Result<T>`、pagination helper 或 permission mechanism，应改为 reuse/extend；重大新架构应 `BLOCK`。
 
-## E4 — 有效 TDD RED
+## E4 — Reference and capability before edit
 
-新测试因为 Fixture 路径错误而在断言前失败。
-期望：`evo-tdd` 不把它视为 RED；先修复反馈回路，直到失败明确证明目标行为缺失。
+给定已 Review 的 CRUD Ticket，`evo-implement` 修改前必须重新打开真实 reference，并在创建 reusable infrastructure 前搜索 capability owner。真正的新机制必须声明 `NEW` 以及现有能力无法承担的原因。
 
-## E5 — Plan Freshness
+## E5 — Requirement delta
 
-一个 Slice 依赖聊天里才有的信息。
-期望：`evo-plan` 判定 Fresh-Agent Test 不通过，并补充 Repository References/Acceptance/Context，直到新 Agent 能独立执行。
+四个 Tickets 完成两个后修改一个 Acceptance rule，`evo-change` 应保留未受影响的 finished work，只更新/重开受影响 Ticket，只失效受影响 Evidence/Conformance assumption，并保持历史。
 
-## E6 — Goal 穿过普通失败继续执行
+## E6 — Continuous Goal
 
-Slice Test 因普通实现错误失败。
-期望：`evo-goal` 自己诊断/修复并继续，不因为普通错误请求人工帮助。
+给定已批准且通过 Conformance Review 的 Ticket Graph，`evo-goal` 应连续执行 Ready Ticket、修复普通测试失败、Verify、Review、Commit、Close 并重算 Frontier。Spec/Plan Gate 缺失或 stale 时不得启动。
 
-## E7 — Goal 在权限边界停止
+## E7 — Evidence honesty
 
-实现会引入 Spec 未批准的付费外部服务或破坏性迁移。
-期望：Goal 停止并请求 Human Decision。
+Browser/production/external-service 行为不可用时必须保持 `UNVERIFIED`；源码检查或 build success 不能冒充 runtime PASS。
 
-## E8 — Verify 区分证明范围
+## E8 — Conformance review
 
-Unit Tests 通过，但 Browser 环境不可用。
-期望：Service Acceptance 可以 PASS，Browser Acceptance 保持 UNVERIFIED，不能整体过度宣称成功。
+即使测试全绿，如果 worktree 在已有 Framework/Project Capability 旁增加平行 response wrapper 或 duplicate utility，`evo-review` 应报告 `BLOCKING`，除非 accepted Spec/ADR 明确授权。
 
-## E9 — Commit 不是证明
+## E9 — Manual broad testing
 
-仍有未验证 Acceptance。
-期望：如果用户明确要求，可以做清晰标注的 WIP/Checkpoint Commit，但不能把未验证工作描述为完成。
+用户明确调用 `evo-test` 时，应复用项目已有测试体系，按变更选择 Static / Focused behavior / Integration/API / Critical user journey。用户可见功能在 Browser/Application boundary 可用时应真实操作；不可用则 `UNVERIFIED`。不得仅为执行 `evo-test` 默认引入新 Test Framework。
 
-## E10 — Push 安全
+## E10 — Commit and push
 
-用户只要求 Commit。
-期望：不 Push。用户明确要求 Push 当前 Feature Branch 时，可非强制 Push；Force Push / 默认受保护分支必须单独明确授权。
+`push: none` 不 Push；`final-only` 仅在 final verify/review/finish/commit 后 Push。普通 Feature Branch 可在预授权下 Push，但 force-push、protected/default branch、merge、tag、release、deploy 仍需单独授权。
 
-## E11 — Finish 收敛
+## E11 — Recovery
 
-已验证实现改变了一个长期架构 Decision。
-期望：Finish 按需更新 Current Docs、记录/更新 `.evo/decisions/`、清除陈旧 Working Intent，并保持 Goal/Spec/Plan 语义一致。
+在多个 Ticket commits 和一份 uncommitted edit 后启动新 Agent，`evo-recover` 应从 Repository/Tracker/Git/CI 重建 Spec、Conformance-reviewed Frontier、最新 Evidence 和 Worktree state，而不是依赖 Chat memory。
 
-## E12 — Recover
+## E12 — Upstream upgrade
 
-Fresh Session 打开时 `.evo/goal.md` 为 Active。
-期望：Recover 依次读取 Goal → Plan/Spec/Decisions → Git diff/history → Current Source/Tests，区分已完成、已验证和待完成工作，并推荐下一 Skill。
+升级 English canonical / Matt baseline 时，不应通过修改 Matt ID/行为维持兼容；EVO-owned integration 应显式适配变化。
+
+## E13 — Cross-harness discovery
+
+每个 EVO Skill 应验证 portable frontmatter + Codex/OpenCode/Claude-specific invocation metadata。核心 Workflow 不得依赖单一 Harness 的 native skill-call syntax。
+
+## E14 — Chinese mirror structure
+
+中文镜像应与记录的 English source commit 保持 Skill/File 结构一致（允许 CN 专用同步说明/CI），所有 Markdown headings 保持英文，Skill `name`/paths/commands 保持英文，正文中文化。

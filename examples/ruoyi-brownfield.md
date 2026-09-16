@@ -1,44 +1,118 @@
-# RuoYi Brownfield 接入示例
+# RuoYi Brownfield example — EVOworkflow 2.0
 
-## 1. Setup
+场景：在已有 RuoYi-derived system 中新增 Supplier Management，同时避免建立平行架构。
 
-安装 EVO Skills，然后运行 `evo-setup`。
-
-如果 Repository 中已有 `docs/adr/`、RFC 或领域 `CONTEXT.md`，Setup 会把工程记忆迁移到：
+## Adopt
 
 ```text
-.evo/decisions/
-.evo/specs/
-.evo/context.md
+setup-matt-pocock-skills
+→ evo-init
 ```
 
-并修复引用，不保留指回旧目录的永久映射。
+`evo-init` 应检查真实 checkout，并在 `docs/agents/repository.md` 记录：
 
-API、部署、用户文档继续留在项目原本的 docs 体系。
+- controller/service/mapper flow；
+- permission annotation 和 menu/button permission naming；
+- DataScope 或等价数据权限；
+- pagination/response convention；
+- transaction/error convention；
+- Vue API/table/form layout；
+- representative backend/frontend tests；
+- build/test/typecheck commands；
+- 可复用 Framework/Project Capability，例如 `BaseController`、`AjaxResult`、`SecurityUtils`、`@PreAuthorize`、`@Log`、dictionary/DataScope 等。
 
-## 2. Init
+应指向真实文件，而不是复制源码正文。
 
-运行 `evo-init`。Agent 读取真实 RuoYi Repository、Maven/Node metadata、代表性模块、Tests、CI 和 Git。静态 metadata 不够时，可以直接使用项目工具，例如：
-
-```bash
-mvn help:effective-pom
-mvn dependency:tree
-```
-
-发现写入 `.evo/project.md` 和 `.evo/context.md`，并标注 Confirmed / Inferred / Unknown。Unknown 只有与当前任务相关时才阻塞。
-
-## 3. Feature
-
-例如会议室功能：
+## Plan
 
 ```text
-evo-grill-with-docs
-→ evo-spec (.evo/specs/meeting-room.md)
-→ evo-plan (.evo/plans/meeting-room.md)
+grill-with-docs
+→ to-spec
+→ evo-spec-review
+→ to-tickets
+→ evo-plan-review
 ```
 
-之后可以逐 Slice 实现，也可以运行 `evo-goal` 连续完成整个已准备好的 Plan。TDD 驱动稳定行为 Seam，Verify 通过 RuoYi 实际 Tests/API/UI 路径证明 Acceptance。
+Spec Review 应明确“不新建与现有 RuoYi 平行的 response/pagination/auth abstraction”。Plan Review 应让每个可执行 Ticket 标明实际 Reference 和 Capability reuse。
 
-## 4. Delivery
+一个合理的 Backend CRUD Ticket 可以表达：
 
-Full Verify + Review 后，由 `evo-finish` 收敛 Current Truth 和 Decisions，再由 `evo-commit` 写入面向结果的 Git 历史。只有获得授权后才 Push。
+```text
+Module fit: existing business module
+Reference: existing mature CRUD module
+Strategy: EXTEND
+Reuse:
+- BaseController
+- startPage()
+- getDataTable()
+- AjaxResult
+- @PreAuthorize
+- @Log / BusinessType
+- existing Service / Mapper / XML conventions
+New abstractions: None
+```
+
+## Execute one ticket
+
+```text
+evo-implement
+```
+
+修改前重新打开真实 reference，例如：
+
+```text
+Permission: EXTEND → <existing reference>
+Pagination: REUSE → <existing reference>
+Supplier module structure: EXTEND → <existing CRUD reference>
+```
+
+没有 Repository-based 原因时，新建 permission/data-scope/response/pagination mechanism 不可接受。
+
+然后：
+
+```text
+evo-verify
+→ evo-review
+→ evo-commit
+```
+
+## Manual test
+
+需要更广验收时手工调用：
+
+```text
+evo-test Supplier Management
+```
+
+若项目已有 Browser/E2E 或可交互应用环境，可模拟：
+
+```text
+login
+→ open Supplier Management
+→ create
+→ search
+→ edit
+→ delete/disable
+```
+
+权限相关改动还应尝试 authorized + unauthorized path。Browser 环境不可用时必须标记相应 User Journey 为 `UNVERIFIED`，不能用 API PASS 冒充 UI PASS。
+
+## Execute continuously
+
+Spec/Tickets 与 Delivery Policy 获得批准后：
+
+```text
+evo-goal
+```
+
+Goal 连续消费 Ready Frontier，并自行处理普通 code/test/review failure；只有需求/风险边界变化时停止。
+
+## Requirement changes halfway through
+
+如果 Supplier deletion 从 hard-delete 改成 disable-only：
+
+```text
+evo-change
+```
+
+只更新 canonical Spec/Tickets，保留不受影响的 finished CRUD work，仅失效 deletion-specific Evidence/Conformance assumption。必要时重新运行受影响的 `evo-spec-review` / `evo-plan-review`，重算 Frontier 后继续 Goal。

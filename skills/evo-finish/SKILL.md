@@ -1,6 +1,6 @@
 ---
 name: evo-finish
-description: 将已经 Verify/Review 的交付结果收敛为 Repository Current Truth，只更新真正的 Owners：Current Docs、Domain Context、ADR 和 Tracker State。
+description: "将已经 Verify/Review 的交付结果收敛为 Repository Current Truth，只更新真正的 Owners：Current Docs、Domain Context、ADR 和 Tracker State。"
 compatibility: "Codex、Claude Code、OpenCode；Repository/Tracker-aware"
 disable-model-invocation: true
 metadata:
